@@ -1,0 +1,12 @@
+{
+  "name": "plan-alimenticio-2070-2150-v4",
+  "version": "4.0.0",
+  "description": "PWA de registro alimenticio 2070-2150 kcal con macros, recetas, batch pollo y seguimiento.",
+  "private": true,
+  "scripts": {
+    "serve": "npx serve .",
+    "cap:init": "npm install @capacitor/core @capacitor/cli @capacitor/android && npx cap init Plan2150 com.mario.plan2150 --web-dir . && npx cap add android && npx cap copy android",
+    "cap:open": "npx cap open android"
+  },
+  "devDependencies": {}
+}

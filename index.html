@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Plan alimenticio 2070-2150 kcal con registro de alimentos, macros, recetas, batch de pollo y seguimiento." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <title>Plan 2070-2150 kcal</title>
+  <style>
+    :root{
+      --bg:#0b1220;--panel:#111827;--panel2:#172033;--card:#101827;--muted:#94a3b8;--text:#e5e7eb;--soft:#cbd5e1;
+      --accent:#22c55e;--accent2:#38bdf8;--warn:#f59e0b;--bad:#ef4444;--line:#243047;--input:#0f172a;
+      --radius:18px;--shadow:0 14px 35px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,#0b1220 0%,#101827 60%,#0b1220 100%);color:var(--text);min-height:100%;}
+    body{padding-bottom:86px}
+    button,input,select,textarea{font:inherit}
+    .app{max-width:1160px;margin:0 auto;padding:16px 14px 28px}
+    header{position:sticky;top:0;z-index:10;margin:-16px -14px 12px;padding:14px;background:rgba(11,18,32,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .top{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1160px;margin:0 auto}
+    .brand{display:flex;gap:10px;align-items:center}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:900;color:#08111f;box-shadow:var(--shadow)}
+    h1{font-size:18px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:2px}.pill{border:1px solid var(--line);background:var(--panel2);color:var(--soft);padding:8px 10px;border-radius:999px;font-size:12px;white-space:nowrap}
+    .tabs{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);display:flex;overflow-x:auto;z-index:50;padding:8px 6px calc(8px + env(safe-area-inset-bottom));gap:6px;box-shadow:0 -12px 30px rgba(0,0,0,.35)}
+    .tabbtn{border:1px solid var(--line);background:#111827;color:var(--soft);padding:9px 12px;border-radius:999px;white-space:nowrap;font-size:13px}.tabbtn.active{background:linear-gradient(135deg,#16a34a,#0284c7);color:white;border-color:transparent}
+    .grid{display:grid;gap:12px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.hide-sm{display:none}.top{align-items:flex-start}.pill{font-size:11px;padding:7px 9px}.app{padding-left:10px;padding-right:10px}.card{padding:12px}}
+    .card{background:linear-gradient(180deg,var(--panel) 0%,#0f172a 100%);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+    .card h2{font-size:18px;margin:0 0 10px}.card h3{font-size:15px;margin:0 0 8px;color:#f8fafc}.muted{color:var(--muted)}.small{font-size:12px}.tiny{font-size:11px}.right{text-align:right}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.wrap{flex-wrap:wrap}.mt{margin-top:12px}.mb{margin-bottom:12px}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px} input,select,textarea{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;padding:10px 11px;outline:none} input:focus,select:focus,textarea:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.12)} textarea{min-height:72px;resize:vertical}
+    .btn{border:none;background:linear-gradient(135deg,#16a34a,#0284c7);color:white;padding:10px 13px;border-radius:12px;font-weight:700;cursor:pointer}.btn.secondary{background:#1f2937;color:#e5e7eb;border:1px solid var(--line)}.btn.warn{background:linear-gradient(135deg,#f59e0b,#ef4444)}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--soft)}.btn:active{transform:translateY(1px)}
+    .metric{padding:12px;border-radius:16px;background:rgba(15,23,42,.88);border:1px solid var(--line)}.metric .num{font-size:24px;font-weight:900;margin-top:4px}.metric .lbl{font-size:12px;color:var(--muted)}.metric .remain{font-size:12px;margin-top:4px;color:var(--soft)}
+    .bar{height:11px;background:#1f2937;border-radius:999px;overflow:hidden;border:1px solid #263246}.fill{height:100%;background:linear-gradient(90deg,#22c55e,#38bdf8);width:0}.fill.warn{background:linear-gradient(90deg,#f59e0b,#fb7185)}.fill.bad{background:linear-gradient(90deg,#ef4444,#f97316)}
+    table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle} th{color:var(--muted);font-weight:600;text-align:left;position:sticky;top:72px;background:#111827;z-index:1}.tablewrap{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:14px}.tag{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);padding:4px 8px;border-radius:999px;background:#111827;color:var(--soft);font-size:12px}.danger{color:#fca5a5}.ok{color:#86efac}.info{color:#7dd3fc}.warntext{color:#fcd34d}
+    canvas{width:100%;height:230px;background:#0f172a;border:1px solid var(--line);border-radius:14px}
+    .hidden{display:none!important}.food-option{padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer}.food-option:hover{background:#172033}.suggest{position:absolute;background:#0f172a;border:1px solid var(--line);border-radius:12px;max-height:220px;overflow:auto;z-index:20;width:100%;box-shadow:var(--shadow)}.rel{position:relative}.kbd{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:2px 6px;color:var(--muted)}
+    .section{display:none}.section.active{display:block}.footer-note{font-size:12px;color:var(--muted);line-height:1.45}.linklike{color:#7dd3fc;text-decoration:underline;cursor:pointer}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div class="brand"><div class="logo">P</div><div><h1>Plan Alimenticio 2070–2150</h1><div class="sub">Dashboard + alimentos + recetas + batch pollo + seguimiento</div></div></div>
+      <div class="pill" id="todayPill">Hoy</div>
+    </div>
+  </header>
+  <main class="app">
+    <section id="dashboard" class="section active">
+      <div class="grid grid2">
+        <div class="card">
+          <div class="row wrap"><h2>Dashboard diario</h2><span class="tag" id="goalTag">Meta 2150 kcal</span></div>
+          <div class="grid grid4 mt">
+            <div class="metric"><div class="lbl">Calorías</div><div class="num" id="mKcal">0</div><div class="bar"><div class="fill" id="barKcal"></div></div><div class="remain" id="rKcal">Te quedan 0</div></div>
+            <div class="metric"><div class="lbl">Proteína</div><div class="num" id="mProtein">0 g</div><div class="bar"><div class="fill" id="barProtein"></div></div><div class="remain" id="rProtein">Te quedan 0 g</div></div>
+            <div class="metric"><div class="lbl">Carbohidratos</div><div class="num" id="mCarbs">0 g</div><div class="bar"><div class="fill" id="barCarbs"></div></div><div class="remain" id="rCarbs">Te quedan 0 g</div></div>
+            <div class="metric"><div class="lbl">Grasas</div><div class="num" id="mFat">0 g</div><div class="bar"><div class="fill" id="barFat"></div></div><div class="remain" id="rFat">Te quedan 0 g</div></div>
+          </div>
+          <div class="grid grid3 mt">
+            <div><label>Fecha del dashboard</label><input type="date" id="dashDate"></div>
+            <div><label>Meta kcal</label><select id="goalSelect"><option value="2150">2150 kcal</option><option value="2070">2070 kcal</option><option value="custom">Personalizada</option></select></div>
+            <div><label>Meta personalizada</label><input type="number" id="customGoal" placeholder="Ej: 2100"></div>
+          </div>
+          <div class="footer-note mt">La app usa valores aproximados por 100 g. Para productos de marca, copia la etiqueta nutricional en <span class="linklike" onclick="go('foods')">Base alimentos</span>.</div>
+        </div>
+        <div class="card">
+          <h2>Entrada rápida</h2>
+          <div class="grid grid2">
+            <div><label>Comida</label><select id="quickMeal"><option>Desayuno</option><option>Almuerzo</option><option>Colación</option><option>Cena</option><option>Extra</option></select></div>
+            <div><label>Gramos pesados</label><input type="number" id="quickGrams" min="0" step="1" placeholder="Ej: 250"></div>
+          </div>
+          <div class="rel mt"><label>Buscar alimento</label><input id="quickFood" autocomplete="off" placeholder="Ej: trutro, arroz, papa, huevo..."><div id="quickSuggest" class="suggest hidden"></div></div>
+          <div class="grid grid2 mt">
+            <div><label>Nota</label><input id="quickNote" placeholder="opcional"></div>
+            <div style="display:flex;align-items:end"><button class="btn" id="quickAdd" style="width:100%">Agregar al día</button></div>
+          </div>
+          <div class="card mt" style="box-shadow:none;background:#0f172a"><h3>Vista previa</h3><div id="quickPreview" class="small muted">Selecciona alimento y gramos.</div></div>
+        </div>
+      </div>
+      <div class="grid grid2 mt">
+        <div class="card"><h2>Gráfico calorías últimos 14 días</h2><canvas id="chartKcal" width="700" height="260"></canvas></div>
+        <div class="card"><h2>Macros de hoy</h2><canvas id="chartMacros" width="700" height="260"></canvas></div>
+      </div>
+      <div class="card mt"><div class="row"><h2>Comidas del día</h2><button class="btn secondary" onclick="go('log')">Ver registro completo</button></div><div class="tablewrap mt"><table id="todayTable"></table></div></div>
+    </section>
+
+    <section id="log" class="section">
+      <div class="card"><div class="row wrap"><h2>Registro de comidas</h2><div class="row"><button class="btn secondary" id="copyToday">Copiar día anterior</button><button class="btn warn" id="clearDay">Borrar día visible</button></div></div><div class="grid grid3 mt"><div><label>Fecha</label><input type="date" id="logDate"></div><div><label>Filtro comida</label><select id="mealFilter"><option value="">Todas</option><option>Desayuno</option><option>Almuerzo</option><option>Colación</option><option>Cena</option><option>Extra</option></select></div><div><label>Buscar en registro</label><input id="logSearch" placeholder="alimento o nota"></div></div><div class="tablewrap mt"><table id="logTable"></table></div></div>
+    </section>
+
+    <section id="foods" class="section">
+      <div class="grid grid2">
+        <div class="card"><h2>Base de alimentos</h2><div class="grid grid2"><div><label>Buscar</label><input id="foodSearch" placeholder="pollo, arroz, yogur..."></div><div><label>Categoría</label><select id="catFilter"><option value="">Todas</option></select></div></div><div class="tablewrap mt"><table id="foodsTable"></table></div></div>
+        <div class="card"><h2>Agregar / editar alimento</h2><input type="hidden" id="foodId"><div class="grid grid2"><div><label>Nombre</label><input id="foodName" placeholder="Ej: Yogur marca X"></div><div><label>Categoría</label><input id="foodCat" placeholder="Proteína, Carb, Verdura..."></div><div><label>kcal / 100 g</label><input type="number" step="0.1" id="foodKcal"></div><div><label>Proteína / 100 g</label><input type="number" step="0.1" id="foodProtein"></div><div><label>Carbohidratos / 100 g</label><input type="number" step="0.1" id="foodCarbs"></div><div><label>Grasas / 100 g</label><input type="number" step="0.1" id="foodFat"></div><div><label>Fibra / 100 g</label><input type="number" step="0.1" id="foodFiber"></div><div><label>Sodio mg / 100 g</label><input type="number" step="1" id="foodSodium"></div></div><label class="mt">Notas</label><textarea id="foodNotes" placeholder="Etiqueta, marca, cocido/crudo, etc."></textarea><div class="row mt"><button class="btn" id="saveFood">Guardar alimento</button><button class="btn secondary" id="newFood">Nuevo</button></div><p class="footer-note mt">Consejo: usa alimentos cocidos cuando pesas comida preparada. Ejemplo: arroz cocido, papa cocida, pollo cocido sin piel.</p></div>
+      </div>
+    </section>
+
+    <section id="recipes" class="section">
+      <div class="grid grid2">
+        <div class="card"><h2>Recetas / comidas por lote</h2><div class="tablewrap"><table id="recipesTable"></table></div></div>
+        <div class="card"><h2>Crear receta</h2><div class="grid grid2"><div><label>Nombre receta</label><input id="recipeName" placeholder="Pollo batch semana 1"></div><div><label>Peso final cocido (g)</label><input type="number" id="recipeFinalWeight" placeholder="Ej: 2100"></div></div><div class="rel mt"><label>Agregar ingrediente</label><input id="recipeFoodSearch" placeholder="Buscar alimento"><div id="recipeSuggest" class="suggest hidden"></div></div><div class="grid grid2 mt"><div><label>Gramos del ingrediente</label><input type="number" id="recipeIngredientGrams"></div><div style="display:flex;align-items:end"><button class="btn secondary" id="addIngredient" style="width:100%">Agregar ingrediente</button></div></div><div class="tablewrap mt"><table id="ingredientsTable"></table></div><div class="card mt" style="box-shadow:none;background:#0f172a"><h3>Macros estimados por 100 g de receta</h3><div id="recipeMacros" class="small muted">Agrega ingredientes y peso final.</div></div><div class="row mt"><button class="btn" id="saveRecipe">Guardar como alimento</button><button class="btn secondary" id="resetRecipe">Limpiar</button></div></div>
+      </div>
+    </section>
+
+    <section id="batch" class="section">
+      <div class="grid grid2">
+        <div class="card"><h2>Batch de trutros de pollo</h2><div class="grid grid2"><div><label>Peso crudo comprado (g)</label><input type="number" id="batchRaw" value="15000"></div><div><label>Peso útil cocido final (g)</label><input type="number" id="batchCooked" placeholder="Ej: 9800"></div><div><label>Porción objetivo (g)</label><input type="number" id="batchPortion" value="250"></div><div><label>Tipo de pollo</label><select id="batchFood"></select></div></div><button class="btn mt" id="calcBatch">Calcular batch</button><div class="card mt" style="box-shadow:none;background:#0f172a"><h3>Resultado</h3><div id="batchResult" class="small muted">Ingresa peso cocido final para calcular porciones.</div></div><p class="footer-note mt">Pesa el pollo ya cocido y sin hueso. Si le quitaste la piel, usa “trutro cocido sin piel”. Si dejaste piel, usa el alimento con piel.</p></div>
+        <div class="card"><h2>Registrar porción del batch</h2><div class="grid grid2"><div><label>Fecha</label><input type="date" id="batchDate"></div><div><label>Comida</label><select id="batchMeal"><option>Almuerzo</option><option>Cena</option><option>Colación</option><option>Desayuno</option><option>Extra</option></select></div><div><label>Gramos servidos</label><input type="number" id="batchServe" value="250"></div><div style="display:flex;align-items:end"><button class="btn" id="batchAdd" style="width:100%">Agregar pollo</button></div></div></div>
+      </div>
+    </section>
+
+    <section id="track" class="section">
+      <div class="grid grid2">
+        <div class="card"><h2>Seguimiento corporal</h2><div class="grid grid3"><div><label>Fecha</label><input type="date" id="trackDate"></div><div><label>Peso kg</label><input type="number" step="0.1" id="trackWeight"></div><div><label>Cintura cm</label><input type="number" step="0.1" id="trackWaist"></div><div><label>Hambre 1-10</label><input type="number" min="1" max="10" id="trackHunger"></div><div><label>Energía 1-10</label><input type="number" min="1" max="10" id="trackEnergy"></div><div><label>Sueño horas</label><input type="number" step="0.1" id="trackSleep"></div><div><label>Entrenamiento</label><select id="trackTraining"><option>No</option><option>Fuerza</option><option>Cardio</option><option>Mixto</option><option>Trabajo fuerte</option></select></div><div><label>Adherencia %</label><input type="number" min="0" max="100" id="trackAdherence"></div><div style="display:flex;align-items:end"><button class="btn" id="saveTrack" style="width:100%">Guardar</button></div></div><label class="mt">Notas</label><textarea id="trackNotes"></textarea></div>
+        <div class="card"><h2>Gráfico peso/cintura</h2><canvas id="chartBody" width="700" height="260"></canvas></div>
+      </div><div class="card mt"><div class="tablewrap"><table id="trackTable"></table></div></div>
+    </section>
+
+    <section id="settings" class="section">
+      <div class="grid grid2">
+        <div class="card"><h2>Configuración de metas</h2><div class="grid grid2"><div><label>Meta kcal alta</label><input type="number" id="setGoalHigh"></div><div><label>Meta kcal baja</label><input type="number" id="setGoalLow"></div><div><label>Proteína meta g</label><input type="number" id="setProtein"></div><div><label>Carbohidratos meta g</label><input type="number" id="setCarbs"></div><div><label>Grasas meta g</label><input type="number" id="setFat"></div><div><label>Fibra meta g</label><input type="number" id="setFiber"></div></div><button class="btn mt" id="saveSettings">Guardar configuración</button></div>
+        <div class="card"><h2>Exportar / importar</h2><div class="grid"><button class="btn" id="exportJSON">Exportar respaldo JSON</button><button class="btn secondary" id="exportCSV">Exportar comidas CSV</button><label>Importar respaldo JSON</label><input type="file" id="importJSON" accept="application/json"><button class="btn warn" id="factoryReset">Reset total</button></div><p class="footer-note mt">Los datos se guardan en este teléfono/navegador usando almacenamiento local. Haz respaldo cada cierto tiempo.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabs" id="tabs"></nav>
+  <script src="app.js"></script>
+</body>
+</html>
