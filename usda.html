@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buscar alimentos USDA</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto;background:#0b1220;color:#e5e7eb;margin:0;padding:14px}main{max-width:950px;margin:auto}.card{background:#111827;border:1px solid #243047;border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 14px 35px rgba(0,0,0,.25)}input,select,button{font:inherit;border-radius:12px;padding:10px;border:1px solid #243047}input,select{background:#0f172a;color:#e5e7eb;width:100%;box-sizing:border-box}button{background:#16a34a;color:white;font-weight:800;cursor:pointer}.secondary{background:#1f2937}.danger{background:#ef4444}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-bottom:1px solid #243047;padding:8px;text-align:left}.r{text-align:right}.muted{color:#94a3b8;font-size:12px}.grid{display:grid;gap:10px;grid-template-columns:2fr 1fr 1fr}.pill{display:inline-block;border:1px solid #243047;border-radius:999px;padding:5px 9px;color:#cbd5e1;font-size:12px}.ok{color:#86efac}.warn{color:#fcd34d}@media(max-width:760px){.grid{grid-template-columns:1fr}table{font-size:12px}td,th{padding:7px 5px}}
+</style>
+</head>
+<body>
+<main>
+<h1>Buscar alimentos USDA</h1>
+<p class="muted">Busca alimentos en USDA FoodData Central y guárdalos en la base local de tu app. La API key queda guardada solo en este teléfono/navegador.</p>
+<div class="card">
+  <span id="keyStatus" class="pill">USDA</span>
+  <div class="grid" style="margin-top:12px">
+    <div><label>API key USDA</label><input id="key" type="password" placeholder="Pega tu API key"></div>
+    <div style="align-self:end"><button onclick="saveKey()">Guardar clave</button></div>
+    <div style="align-self:end"><button class="secondary" onclick="location.href='./index.html'">Volver app</button></div>
+  </div>
+  <p class="muted">Consigue una key gratis en FoodData Central. Esta app no la sube a GitHub.</p>
+</div>
+<div class="card">
+  <div class="grid">
+    <div><label>Buscar alimento</label><input id="q" placeholder="Ej: cooked rice, chicken thigh, potato, oats"></div>
+    <div><label>Tipo</label><select id="type"><option value="Foundation,SR Legacy,Survey (FNDDS),Branded">Todos</option><option value="Foundation,SR Legacy,Survey (FNDDS)">Genéricos</option><option value="Branded">Marcas</option></select></div>
+    <div style="align-self:end"><button onclick="searchUSDA()">Buscar</button></div>
+  </div>
+  <p id="msg" class="muted"></p>
+</div>
+<div class="card">
+  <table id="tbl"><tr><th>Alimento</th><th class="r">kcal</th><th class="r">P</th><th class="r">C</th><th class="r">G</th><th></th></tr></table>
+</div>
+</main>
+<script>
+const LS='plan2150_v4_state',KEY='plan2150_usda_api_key';let results=[];
+const E=s=>String(s||'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));
+const N=v=>Number.isFinite(Number(v))?Number(v):0;
+const F=x=>N(x).toLocaleString('es-CL',{maximumFractionDigits:1});
+const UID=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-5);
+function getState(){try{return JSON.parse(localStorage.getItem(LS))}catch(e){return null}}
+function putState(s){localStorage.setItem(LS,JSON.stringify(s))}
+function status(){keyStatus.textContent=localStorage.getItem(KEY)?'USDA: clave guardada':'USDA: falta clave';keyStatus.className='pill '+(localStorage.getItem(KEY)?'ok':'warn')}
+function saveKey(){if(key.value.trim())localStorage.setItem(KEY,key.value.trim());key.value='';status();alert('Clave USDA guardada en este teléfono.')}
+function nutrient(food,k){const map={kcal:['1008','energy'],protein:['1003','protein'],carbs:['1005','carbohydrate'],fat:['1004','total lipid'],fiber:['1079','fiber'],sodium:['1093','sodium']};for(const it of food.foodNutrients||[]){let id=String(it.nutrientId||it.nutrientNumber||''),name=String(it.nutrientName||'').toLowerCase(),val=it.value??it.amount??0;if(map[k].some(x=>id===x||name.includes(x)))return N(val)}return 0}
+async function searchUSDA(){let k=localStorage.getItem(KEY),query=q.value.trim();if(!k){k=prompt('Pega tu API key USDA');if(k){localStorage.setItem(KEY,k);status()}else return}if(!query){msg.textContent='Escribe un alimento.';return}msg.textContent='Buscando en USDA...';try{let dataType=type.value.split(',').map(x=>x.trim());let r=await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,pageSize:20,dataType})});if(!r.ok)throw Error('HTTP '+r.status);let j=await r.json();results=(j.foods||[]).map(x=>({fdcId:x.fdcId,name:x.description||'USDA food',brand:x.brandOwner||x.brandName||'',type:x.dataType||'',kcal:nutrient(x,'kcal'),protein:nutrient(x,'protein'),carbs:nutrient(x,'carbs'),fat:nutrient(x,'fat'),fiber:nutrient(x,'fiber'),sodium:nutrient(x,'sodium')}));draw();msg.textContent=results.length?'Resultados por 100 g. Revisa crudo/cocido/marca antes de guardar.':'Sin resultados.'}catch(err){msg.textContent='Error: '+err.message}}
+function draw(){tbl.innerHTML='<tr><th>Alimento</th><th class="r">kcal</th><th class="r">P</th><th class="r">C</th><th class="r">G</th><th></th></tr>'+results.map((x,i)=>'<tr><td><b>'+E(x.name)+'</b><br><span class="muted">'+E(x.type)+(x.brand?' · '+E(x.brand):'')+' · FDC '+x.fdcId+'</span></td><td class="r">'+F(x.kcal)+'</td><td class="r">'+F(x.protein)+'</td><td class="r">'+F(x.carbs)+'</td><td class="r">'+F(x.fat)+'</td><td><button onclick="saveFood('+i+')">Guardar</button></td></tr>').join('')}
+function saveFood(i){let x=results[i],s=getState();if(!s||!s.foods){alert('Primero abre la app principal una vez para crear la base local.');return}s.foods.push({id:UID(),name:(x.name+(x.brand?' - '+x.brand:'')).slice(0,120),category:'USDA',kcal:N(x.kcal),protein:N(x.protein),carbs:N(x.carbs),fat:N(x.fat),fiber:N(x.fiber),sodium:N(x.sodium),notes:'Fuente USDA FoodData Central FDC '+x.fdcId+'. Confirmar crudo/cocido/marca.',system:false});putState(s);alert('Guardado en la base de alimentos de la app.')}
+status();q.addEventListener('keydown',ev=>{if(ev.key==='Enter')searchUSDA()});
+</script>
+</body>
+</html>
